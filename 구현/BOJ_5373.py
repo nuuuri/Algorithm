@@ -1,8 +1,19 @@
 # U D F B L R
 # 0 1 2 3 4 5
-cube = [[x * 3] * 3 for x in 'wyrogb']
+cube = [[[x for _ in range(3)] for _ in range(3)] for x in 'wyrogb']
 
 print(cube)
+
+def rotate(arr, dir):
+    for i in range(4):
+        for j in range(3):
+            if dir == '+':
+                k = 0 if i == 3 else i+1
+            else:
+                k = 3 if i == 0 else i-1
+            x, y, z = arr[i][j]
+            xx, yy, zz = arr[k][j]
+            cube[x][y][z] = cube[xx][yy][zz]
 
 for _ in range(int(input())):
     n = int(input())
@@ -11,41 +22,16 @@ for _ in range(int(input())):
         dir = move[1]
         
         if face == 'U':
-            if dir == '+':
-                temp = cube[2][0]
-                cube[2][0] = cube[5][0]
-                cube[5][0] = cube[3][0]
-                cube[3][0] = cube[4][0]
-                cube[4][0] = temp
-            else:
-                temp = cube[2][0]
-                cube[2][0] = cube[4][0]
-                cube[4][0] = cube[3][0]
-                cube[3][0] = cube[5][0]
-                cube[5][0] = temp
-
+            rotate([[(2,0,0), (2,0,1), (2,0,2)],[(5,0,0), (5,0,1), (5,0,2)],[(3,0,0), (3,0,1), (3,0,2)],[(4,0,0), (4,0,1), (4,0,2)]], dir)
         elif face == 'D':
-            if dir == '+':
-                temp = cube[2][2]
-                cube[2][2] = cube[5][2]
-                cube[5][2] = cube[3][2]
-                cube[3][2] = cube[4][2]
-                cube[4][2] = temp
-            else:
-                temp = cube[2][2]
-                cube[2][2] = cube[4][2]
-                cube[4][2] = cube[3][2]
-                cube[3][2] = cube[5][2]
-                cube[5][2] = temp
-
+            rotate([[(2,2,0), (2,2,1), (2,2,2)],[(5,2,0), (5,2,1), (5,2,2)],[(3,2,0), (3,2,1), (3,2,2)],[(4,2,0), (4,2,1), (4,2,2)]], dir)
         elif face == 'F':
-            if dir == '+':
-                cube[5][0][0], cube[5][1][0], cube[5][2][0] = temp
-
-            print()
+            rotate([[(0,2,0), (0,2,1), (0,2,2)],[(5,0,0), (5,1,0), (5,2,0)],[(1,0,2), (1,0,1), (1,0,0)],[(4,2,2), (4,1,2), (4,0,2)]], dir)
         elif face == 'B':
-            print()
+            rotate([[(0,0,0), (0,0,1), (0,0,2)],[(5,0,2), (5,1,2), (5,2,2)],[(1,2,2), (1,2,1), (1,2,0)],[(4,2,0), (4,1,0), (4,0,0)]], dir)
         elif face == 'L':
-            print()
+            rotate([[(0,0,0), (0,1,0), (0,2,0)],[(2,0,0), (2,1,0), (2,2,0)],[(1,0,0), (1,1,0), (1,2,0)],[(3,2,2), (3,1,2), (3,0,2)]], dir)
         elif face == 'R':
-            print(0)
+            rotate([[(0,2,2), (0,1,2), (0,0,2)],[(3,0,0), (3,1,0), (3,2,0)],[(1,2,2), (1,1,2), (1,0,2)],[(2,2,2), (2,1,2), (2,0,2)]], dir)
+
+    print(cube[0])
