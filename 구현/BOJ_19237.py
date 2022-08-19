@@ -1,3 +1,5 @@
+# G[2] 메모리 30840 KB  시간 1708 ms
+
 import sys
 
 MOVE = [(-1, 0), (1, 0), (0, -1), (0, 1)] # 위 아 왼 오
@@ -20,7 +22,7 @@ for idx in range(M):
 def spray():
     for idx in range(1, M+1):
         if idx not in shark:
-            return 
+            continue
 
         i, j = shark[idx][0], shark[idx][1]
         space[i][j] = [idx, K]
