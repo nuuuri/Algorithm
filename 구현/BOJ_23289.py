@@ -1,4 +1,4 @@
-# P[5] 메모리 145888 KB  시간 1460 ms
+# P[5] 메모리 121948 KB  시간 672 ms
 
 import sys, copy
 input = sys.stdin.readline
@@ -30,50 +30,34 @@ for _ in range(W):
         wall[x-1][y].append((x-1, y-1))
 
 def turnOnHeater(x, y, d):
-    def func(arr, x, y, d, temp):
-        arr[x][y] = temp
-        move = [(-1, 0), (0, 1), (1, 0), (0, -1)] # 오 아래 왼 위
+    MOVE = [[(-1,0),(0,1),(1,0)], [(-1,0),(0,-1),(1,0)], [(0,1),(-1,0),(0,-1)], [(0,1),(1,0),(0,-1)]]
+    move = MOVE[d]
+    queue = [(x+move[1][0], y+move[1][1], 5)]
+    visited = [[False for _ in range(C)] for _ in range(R)]
+    visited[x+move[1][0]][y+move[1][1]] = True
+
+    while queue:
+        x, y, temp = queue.pop(0)
+        room[x][y] += temp
 
         if temp == 1:
-            return
+            continue
 
-        # x-1, y+1
-        dx, dy = move[d]
-        if 0 <= x+dx < R and 0 <= y+dy < C and (x+dx, y+dy) not in wall[x][y]:
-            xx = x + dx + move[(d+1)%4][0]
-            yy = y + dy + move[(d+1)%4][1]
-            if 0 <= xx < R and 0 <= yy < C and (xx, yy) not in wall[x+dx][y+dy]:
-                func(arr, xx, yy, d, temp-1)
-
-        # x, y+1
-        dx, dy = move[(d+1)%4]
-        if  0 <= x+dx < R and 0 <= y+dy < C and (x+dx, y+dy) not in wall[x][y]:
-            func(arr, x+dx, y+dy, d, temp-1)
-
-        # x+1, y+1
-        dx, dy = move[(d+2)%4]
-        if 0 <= x+dx < R and 0 <= y+dy < C and (x+dx, y+dy) not in wall[x][y]:
-            xx = x + dx + move[(d+1)%4][0]
-            yy = y + dy + move[(d+1)%4][1]
-            if 0 <= xx < R and 0 <= yy < C and (xx, yy) not in wall[x+dx][y+dy]:
-                func(arr, xx, yy, d, temp-1)
-
-    temp = [[0 for _ in range(C)] for _ in range(R)]
-    dx = [0, 1, 0, -1]
-    dy = [1, 0, -1, 0]
-
-    if d == 1:
-        d = 2
-    elif d == 2:
-        d = 3
-    elif d == 3:
-        d = 1
-
-    func(temp, x+dx[d], y+dy[d], d, 5)
-
-    for i in range(R):
-        for j in range(C):
-            room[i][j] += temp[i][j]
+        # 대각선
+        for d in [0, 2]:
+            dx, dy = move[d]
+            dxx, dyy = move[1]
+            if 0 <= x+dx < R and 0 <= y+dy < C and (x+dx, y+dy) not in wall[x][y]:
+                if 0 <= x+dx+dxx < R and 0 <= y+dy+dyy < C and (x+dx+dxx, y+dy+dyy) not in wall[x+dx][y+dy]:
+                    if not visited[x+dx+dxx][y+dy+dyy]:
+                        queue.append((x+dx+dxx, y+dy+dyy, temp-1))
+                        visited[x+dx+dxx][y+dy+dyy] = True
+        
+        # 옆
+        dx, dy = move[1]
+        if 0 <= x+dx < R and 0 <= y+dy < C and (x+dx, y+dy) not in wall[x][y] and not visited[x+dx][y+dy]:
+            queue.append((x+dx, y+dy, temp-1))
+            visited[x+dx][y+dy] = True
 
 while ans <= 100:
     for x, y, d in heater:
